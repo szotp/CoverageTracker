@@ -28,6 +28,12 @@ runAsync {
     changeFormatter.positivePrefix = "+"
     changeFormatter.minimumFractionDigits = 1
     
+    guard !difference.isEmpty else {
+        print("Coverage: no change")
+        return
+    }
+    
+    print("Coverage: no change")
     for change in difference {
         let coverage = coverage.first { coverage in
             coverage.name == change.name

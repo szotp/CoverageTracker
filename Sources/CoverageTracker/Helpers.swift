@@ -134,6 +134,10 @@ func runAsync(_ block: @escaping() async throws -> Void) {
 
 func getEnvironmentVariable(_ key: String) -> String {
     if let value = ProcessInfo.processInfo.environment[key] {
+        if value == "" {
+            fatalError("\(key) is empty")
+        }
+        
         return value
     }
     

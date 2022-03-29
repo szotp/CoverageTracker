@@ -88,6 +88,7 @@ func downloadPreviousArtifact(title: String) async throws -> URL {
                     try ShellTask("mkdir previous_artifacts").wait()
                     try ShellTask("curl \"\(url)\" > previous_artifacts/\(artifact.title)").wait()
                     
+                    fputs("Using \(artifact.title) from \(build.slug) \n", stderr)
                     try ShellTask("unzip \(artifact.title)", currentDirectory: "previous_artifacts").wait()
                     return URL(fileURLWithPath: "previous_artifacts/\(title)")
                 }
