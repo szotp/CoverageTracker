@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import XCParseCore
 
 struct TargetCoverage: Codable {
     let name: String
@@ -50,12 +49,14 @@ private func pair<T>(_ lhs: [T], _ rhs: [T], key: (T) -> String) -> [(String, T,
     }
 }
 
-extension XCResult {
+struct  XCResult {
+    let path: String
+    
     func getTargetCoverage() throws -> [TargetCoverage] {
         let json = try ShellTask("xcrun xccov view --report --only-targets --json \(path)").wait()
         return try JSONDecoder().decode([TargetCoverage].self, from: json)
     }
-    
+    /*
     func exportScreenshots() -> [URL] {
         let output = URL(fileURLWithPath: path).deletingLastPathComponent()
         
@@ -107,4 +108,5 @@ extension XCResult {
         
         return result
     }
+     */
 }
