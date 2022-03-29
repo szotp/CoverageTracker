@@ -11,6 +11,15 @@ let environment = Environment()
 environment.debugOverride()
 
 runAsync {
+    do {
+        try await printCoverage()
+    } catch {
+        print("Failed to calculate coverage")
+        throw error
+    }
+}
+
+func printCoverage() async throws {
     let resultName = URL(fileURLWithPath: environment.resultPath).lastPathComponent
     let previousResultURL = try await downloadPreviousArtifact(title:resultName)
     

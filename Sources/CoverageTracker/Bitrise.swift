@@ -73,8 +73,11 @@ func downloadPreviousArtifact(title: String) async throws -> URL {
         return resultURL
     }
     
+    let currentHash = try git.getCurrentHash()
+    dlog("current hash is \(currentHash)")
+    
     for build in builds {
-        guard let hash = build.commit_hash else {
+        guard let hash = build.commit_hash, hash != currentHash else {
             continue
         }
         
@@ -88,7 +91,7 @@ func downloadPreviousArtifact(title: String) async throws -> URL {
                     try ShellTask("mkdir previous_artifacts").wait()
                     try ShellTask("curl \"\(url)\" > previous_artifacts/\(artifact.title)").wait()
                     
-                    fputs("Using \(artifact.title) from \(build.slug) \n", stderr)
+                    dlog("Using \(artifact.title) from \(build.slug) with hash \(hash) \n")
                     try ShellTask("unzip \(artifact.title)", currentDirectory: "previous_artifacts").wait()
                     return URL(fileURLWithPath: "previous_artifacts/\(title)")
                 }

@@ -16,4 +16,8 @@ class Git {
             return false
         }
     }
+    
+    func getCurrentHash() throws -> String {
+        return try ShellTask("git rev-parse HEAD").waitForString().trimmingCharacters(in: .whitespacesAndNewlines)
+    }
 }

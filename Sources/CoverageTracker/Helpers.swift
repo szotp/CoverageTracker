@@ -124,7 +124,7 @@ func runAsync(_ block: @escaping() async throws -> Void) {
         do {
             try await block()
         } catch {
-            print(error)
+            dlog(error)
         }
 
         exit(0)
@@ -142,4 +142,8 @@ func getEnvironmentVariable(_ key: String) -> String {
     }
     
     fatalError("Failed to read variable: \(key)")
+}
+
+func dlog(_ data: Any) {
+    fputs("\(data)\n", stderr)
 }
