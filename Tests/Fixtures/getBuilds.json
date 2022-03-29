@@ -1,0 +1,82 @@
+{
+  "data": [
+    {
+      "triggered_at": "2022-03-27T06:31:46Z",
+      "started_on_worker_at": "2022-03-27T06:31:47Z",
+      "environment_prepare_finished_at": "2022-03-27T06:31:47Z",
+      "finished_at": "2022-03-27T06:35:07Z",
+      "slug": "4992871b-28d6-4cff-909d-6d5de7e3d0d6",
+      "status": 1,
+      "status_text": "success",
+      "abort_reason": null,
+      "is_on_hold": false,
+      "is_processed": true,
+      "is_status_sent": true,
+      "branch": "feature/test",
+      "build_number": 4,
+      "commit_hash": "1e9dd3202b68feab0b1e1a0eb792f1f39e1563f6",
+      "commit_message": "test",
+      "tag": null,
+      "triggered_workflow": "primary",
+      "triggered_by": "webhook",
+      "machine_type_id": "standard",
+      "stack_identifier": "osx-xcode-13.3.x",
+      "original_build_params": {
+        "commit_hash": "1e9dd3202b68feab0b1e1a0eb792f1f39e1563f6",
+        "commit_message": "test",
+        "branch": "feature/test",
+        "branch_repo_owner": "szotp",
+        "branch_dest": "main",
+        "branch_dest_repo_owner": "szotp",
+        "pull_request_id": 1,
+        "pull_request_repository_url": "git@github.com:szotp/ios-bitrise-playground.git",
+        "base_repository_url": "git@github.com:szotp/ios-bitrise-playground.git",
+        "head_repository_url": "git@github.com:szotp/ios-bitrise-playground.git",
+        "pull_request_merge_branch": "pull/1/merge",
+        "pull_request_head_branch": "pull/1/head",
+        "pull_request_author": "szotp",
+        "check_run_id": 5708098454
+      },
+      "pull_request_id": 1,
+      "pull_request_target_branch": "main",
+      "pull_request_view_url": "https://github.com/szotp/ios-bitrise-playground/pull/1",
+      "commit_view_url": "https://github.com/szotp/ios-bitrise-playground/commit/1e9dd3202b68feab0b1e1a0eb792f1f39e1563f6",
+      "credit_cost": null
+    },
+    {
+      "triggered_at": "2022-03-27T06:20:42Z",
+      "started_on_worker_at": "2022-03-27T06:20:46Z",
+      "environment_prepare_finished_at": "2022-03-27T06:20:46Z",
+      "finished_at": "2022-03-27T06:23:55Z",
+      "slug": "95807e58-11d7-4954-b846-da6058fb42bc",
+      "status": 1,
+      "status_text": "success",
+      "abort_reason": null,
+      "is_on_hold": false,
+      "is_processed": true,
+      "is_status_sent": false,
+      "branch": "main",
+      "build_number": 2,
+      "commit_hash": null,
+      "commit_message": null,
+      "tag": null,
+      "triggered_workflow": "primary",
+      "triggered_by": "manual-szotp",
+      "machine_type_id": "standard",
+      "stack_identifier": "osx-xcode-13.3.x",
+      "original_build_params": {
+        "branch": "main",
+        "workflow_id": "primary"
+      },
+      "pull_request_id": 0,
+      "pull_request_target_branch": null,
+      "pull_request_view_url": null,
+      "commit_view_url": null,
+      "credit_cost": null
+    }
+  ],
+  "paging": {
+    "total_item_count": 2,
+    "page_item_limit": 50
+  }
+}
