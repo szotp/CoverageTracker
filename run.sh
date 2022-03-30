@@ -1,6 +1,6 @@
 # usage: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/szotp/CoverageTracker/master/run.sh)"
 
-git -C CoverageTracker pull || git@github.com:szotp/CoverageTracker.git
+git -C CoverageTracker pull || git clone git@github.com:szotp/CoverageTracker.git
 cd CoverageTracker
 swift build -c release
 cd ..
