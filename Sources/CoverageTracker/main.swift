@@ -42,12 +42,13 @@ func printCoverage() async throws {
         return
     }
     
-    print("Coverage: no change")
+    print("Coverage:")
     for change in difference {
         let coverage = coverage.first { coverage in
             coverage.name == change.name
         }!
         
+        let emoji = coverage.lineCoverage > 0 ? "⬆" : "⬇"
         let percentage = percentFormatter.string(from: .init(value: coverage.lineCoverage))!
         let change = changeFormatter.string(from: .init(value: change.lineCoverage * 100))!
         

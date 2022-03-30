@@ -16,7 +16,7 @@ let package = Package(
         //.package(name: "XCParseCore", url: "https://github.com/ChargePoint/xcparse", .upToNextMajor(from: "2.2.1")),
     ],
     targets: [
-        .target(
+        .executableTarget(
             name: "CoverageTracker",
             dependencies: []),
         .testTarget(
