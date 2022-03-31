@@ -11,7 +11,7 @@ class Environment: DebugOverriding {
     lazy var percentFormatter: NumberFormatter = {
         let percentFormatter = NumberFormatter()
         percentFormatter.numberStyle = .percent
-        percentFormatter.minimumFractionDigits = 1
+        percentFormatter.minimumFractionDigits = 2
         return percentFormatter
     }()
     
@@ -88,8 +88,8 @@ extension TargetCoverageDiff {
     var changeString: String {
         let changeFormatter = NumberFormatter()
         changeFormatter.positivePrefix = "+"
-        changeFormatter.minimumFractionDigits = 1
+        changeFormatter.minimumFractionDigits = 2
         
-        return changeFormatter.string(from: .init(value: change)) ?? "-"
+        return changeFormatter.string(from: .init(value: change * 100)) ?? "-"
     }
 }
