@@ -67,6 +67,7 @@ struct PreviousArtifact {
     let url: URL
     let previousHash: String
     let currentHash: String
+    let build: BitriseApi.Build
 }
 
 func downloadPreviousArtifact(title: String) async throws -> PreviousArtifact {
@@ -96,7 +97,7 @@ func downloadPreviousArtifact(title: String) async throws -> PreviousArtifact {
                     
                     dlog("Using \(artifact.title) from \(build.slug) with hash \(hash) \n")
                     try ShellTask("unzip \(artifact.title)", currentDirectory: "previous_artifacts").wait()
-                    return PreviousArtifact(url: resultURL, previousHash: hash, currentHash: currentHash)
+                    return PreviousArtifact(url: resultURL, previousHash: hash, currentHash: currentHash, build: build)
                 }
             }
         }
