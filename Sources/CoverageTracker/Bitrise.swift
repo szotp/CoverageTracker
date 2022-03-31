@@ -22,7 +22,7 @@ class BitriseApi {
     }
     
     func getBuilds(appSlug: String) async throws -> BitriseResponse<[Build]> {
-        let url = URL(string: "https://api.bitrise.io/v0.1/apps/\(appSlug)/builds?sort_by=created_at&status=1")!
+        let url = URL(string: "https://api.bitrise.io/v0.1/apps/\(appSlug)/builds?sort_by=running_first&status=1")!
         let data = try await session.data(from: url).0
         return try decoder.decode(BitriseResponse<[Build]>.self, from: data)
     }
@@ -63,15 +63,18 @@ enum Errors: Error {
     case notFound
 }
 
-func downloadPreviousArtifact(title: String) async throws -> URL {
+struct PreviousArtifact {
+    let url: URL
+    let previousHash: String
+    let currentHash: String
+}
+
+func downloadPreviousArtifact(title: String) async throws -> PreviousArtifact {
     let api = BitriseApi(token: environment.token)
     let git = Git()
     let builds = try await api.getBuilds(appSlug: environment.appSlug).data
     let resultURL = URL(fileURLWithPath: "previous_artifacts/\(title)")
     
-    if files.fileExists(atPath: resultURL.path) {
-        return resultURL
-    }
     
     let currentHash = try git.getCurrentHash()
     dlog("current hash is \(currentHash)")
@@ -93,7 +96,7 @@ func downloadPreviousArtifact(title: String) async throws -> URL {
                     
                     dlog("Using \(artifact.title) from \(build.slug) with hash \(hash) \n")
                     try ShellTask("unzip \(artifact.title)", currentDirectory: "previous_artifacts").wait()
-                    return URL(fileURLWithPath: "previous_artifacts/\(title)")
+                    return PreviousArtifact(url: resultURL, previousHash: hash, currentHash: currentHash)
                 }
             }
         }

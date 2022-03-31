@@ -5,6 +5,14 @@ class Environment: DebugOverriding {
     lazy var token = getEnvironmentVariable("BITRISE_ACCESS_TOKEN")
     lazy var targetBranch = getEnvironmentVariable("BITRISEIO_GIT_BRANCH_DEST")
     lazy var resultPath = getEnvironmentVariable("BITRISE_XCRESULT_PATH")
+    
+    lazy var percentFormatter: NumberFormatter = {
+        let percentFormatter = NumberFormatter()
+        percentFormatter.numberStyle = .percent
+        percentFormatter.minimumFractionDigits = 1
+        return percentFormatter
+    }()
+    
 }
 
 let environment = Environment()
@@ -21,37 +29,51 @@ runAsync {
 
 func printCoverage() async throws {
     let resultName = URL(fileURLWithPath: environment.resultPath).lastPathComponent
-    let previousResultURL = try await downloadPreviousArtifact(title:resultName)
+    let previousArtifact = try await downloadPreviousArtifact(title:resultName)
     
     let current = XCResult(path: environment.resultPath)
-    let previous = XCResult(path: previousResultURL.path)
+    let previous = XCResult(path: previousArtifact.url.path)
     
-    let coverage = try current.getTargetCoverage()
-    let difference = try TargetCoverage.difference(before: previous.getTargetCoverage(), after: coverage)
+    let previousCoverage = try previous.getTargetCoverage()
+    let currentCoverage = try current.getTargetCoverage()
     
-    let percentFormatter = NumberFormatter()
-    percentFormatter.numberStyle = .percent
-    percentFormatter.minimumFractionDigits = 1
+    let difference = TargetCoverage.difference(before: previousCoverage, after: currentCoverage)
     
     let changeFormatter = NumberFormatter()
     changeFormatter.positivePrefix = "+"
     changeFormatter.minimumFractionDigits = 1
     
-    guard !difference.isEmpty else {
+    if difference.isEmpty {
         print("Coverage: no change")
-        return
+    } else {
+        print("Coverage:")
+        for change in difference {
+            let coverage = currentCoverage.first { coverage in
+                coverage.name == change.name
+            }!
+            
+            let emoji = coverage.lineCoverage > 0 ? "⬆" : "⬇"
+            let percentage = environment.percentFormatter.string(from: .init(value: coverage.lineCoverage))!
+            let change = changeFormatter.string(from: .init(value: change.lineCoverage * 100))!
+            
+            print("\(emoji) \(coverage.name) \(percentage) (\(change))")
+        }
     }
     
-    print("Coverage:")
-    for change in difference {
-        let coverage = coverage.first { coverage in
-            coverage.name == change.name
-        }!
-        
-        let emoji = coverage.lineCoverage > 0 ? "⬆" : "⬇"
-        let percentage = percentFormatter.string(from: .init(value: coverage.lineCoverage))!
-        let change = changeFormatter.string(from: .init(value: change.lineCoverage * 100))!
-        
-        print("\(coverage.name) \(percentage) (\(change))")
+    print("<details>")
+    print("")
+    
+    dlogCoverage(hash: previousArtifact.previousHash, items: previousCoverage)
+    print("")
+    dlogCoverage(hash: previousArtifact.currentHash, items: currentCoverage)
+    print("</details>")
+
+}
+
+func dlogCoverage(hash: String, items: [TargetCoverage]) {
+    print("Coverage for \(hash)")
+    for coverage in items {
+        let percentage = environment.percentFormatter.string(from: .init(value: coverage.lineCoverage)) ?? "-"
+        print("- \(coverage.name) \(percentage)")
     }
 }
