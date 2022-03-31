@@ -45,43 +45,49 @@ func printCoverage() async throws {
     let data = try encoder.encode(currentCoverage)
     try? data.write(to: URL(fileURLWithPath: environment.deployURL).appendingPathComponent("coverage.json"))
     
-    let changeFormatter = NumberFormatter()
-    changeFormatter.positivePrefix = "+"
-    changeFormatter.minimumFractionDigits = 1
+    var coveredLines = 0
+    var executableLines = 0
     
-    if difference.isEmpty {
-        print("Coverage: no change")
-    } else {
-        print("Coverage:")
-        for change in difference {
-            let coverage = currentCoverage.first { coverage in
-                coverage.name == change.name
-            }!
-            
-            let emoji = change.lineCoverage > 0 ? "⬆" : "⬇"
-            let percentage = environment.percentFormatter.string(from: .init(value: coverage.lineCoverage))!
-            let change = changeFormatter.string(from: .init(value: change.lineCoverage * 100))!
-            
-            print("\(emoji) \(coverage.name) \(percentage) (\(change))")
-        }
+    for item in difference {
+        coveredLines += item.after.coveredLines
+        executableLines += item.after.executableLines
     }
     
-    print("<details>")
-    print("<summary>See more</summary>")
-    print("")
+    let total = TargetCoverage(name: "total", executableLines: executableLines, coveredLines: coveredLines)
     
-    let previousBuild = "https://app.bitrise.io/build/\(previousArtifact.build.slug)"
-    dlogCoverage(title: "[previous build](\(previousBuild)) (\(previousArtifact.previousHash))", items: previousCoverage)
+    print("<details><summary>Coverage (\(total.percentString))</summary>")
     print("")
-    dlogCoverage(title: "[current build](\(environment.buildURL)) (\(previousArtifact.currentHash))", items: currentCoverage)
-    print("</details>")
+    let previousBuild = "https://app.bitrise.io/build/\(previousArtifact.build.slug)"
+    let previousTitle = "[previous build](\(previousBuild)) (\(previousArtifact.previousHash))"
+    let currentTitle = "[current build](\(environment.buildURL)) (\(previousArtifact.currentHash))"
+    
+    print("| Target | \(previousTitle) | \(currentTitle) |")
+    print("| --- | --- | --- |")
+    
+    for item in difference {
+        print("| \(item.after.name) | \(item.before.percentString) | \(item.after.percentString) |")
+    }
 
+    for item in difference where item.hasChanged {
+        let emoji = item.change > 0 ? "⬆" : "⬇"
+        let percentage = item.after.percentString
+        
+        print("\(emoji) \(item.after.name) \(percentage) (\(item.changeString))")
+    }
 }
 
-func dlogCoverage(title: String, items: [TargetCoverage]) {
-    print("Coverage for \(title)")
-    for coverage in items {
-        let percentage = environment.percentFormatter.string(from: .init(value: coverage.lineCoverage)) ?? "-"
-        print("- \(coverage.name) \(percentage)")
+extension TargetCoverage {
+    var percentString: String {
+        return environment.percentFormatter.string(from: NSNumber(value: lineCoverage)) ?? "-"
+    }
+}
+
+extension TargetCoverageDiff {
+    var changeString: String {
+        let changeFormatter = NumberFormatter()
+        changeFormatter.positivePrefix = "+"
+        changeFormatter.minimumFractionDigits = 1
+        
+        return changeFormatter.string(from: .init(value: change)) ?? "-"
     }
 }

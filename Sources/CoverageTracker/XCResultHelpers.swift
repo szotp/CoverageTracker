@@ -9,22 +9,31 @@ import Foundation
 
 struct TargetCoverage: Codable {
     let name: String
-    let lineCoverage: Double
     let executableLines: Int
     let coveredLines: Int
     
-    static func difference(before: [TargetCoverage], after: [TargetCoverage]) -> [TargetCoverage] {
+    var lineCoverage: Double {
+        return executableLines > 0 ? Double(coveredLines) / Double(executableLines) : 0
+    }
+    
+    static func difference(before: [TargetCoverage], after: [TargetCoverage]) -> [TargetCoverageDiff] {
         let paired = pair(before, after, key: { $0.name })
         return paired.map { (name, before, after) in
-            return TargetCoverage(
-                name: name,
-                lineCoverage: after.lineCoverage - before.lineCoverage,
-                executableLines: after.executableLines - before.executableLines,
-                coveredLines: after.coveredLines - before.coveredLines
-            )
-        }.filter { coverage in
-            return coverage.executableLines != 0 || coverage.coveredLines != 0
+            return TargetCoverageDiff(before: before, after: after)
         }
+    }
+}
+
+struct TargetCoverageDiff {
+    let before: TargetCoverage
+    let after: TargetCoverage
+    
+    var change: Double {
+        return after.lineCoverage - before.lineCoverage
+    }
+    
+    var hasChanged: Bool {
+        return change != 0
     }
 }
 
