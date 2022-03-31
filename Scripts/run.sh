@@ -1,4 +1,4 @@
-# usage: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/szotp/CoverageTracker/master/run.sh)"
+# usage: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/szotp/CoverageTracker/master/Scripts/run.sh)"
 # or just add lines below to bitrise
 
 curl -L https://github.com/szotp/CoverageTracker/releases/latest/download/CoverageTracker > CoverageTracker
