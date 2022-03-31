@@ -68,7 +68,7 @@ func printCoverage() async throws {
         print("| \(item.after.name) | \(item.before.percentString) | \(item.after.percentString) |")
     }
     
-    print("")
+    print("</details>")
 
     for item in difference where item.hasChanged {
         let emoji = item.change > 0 ? "⬆" : "⬇"
